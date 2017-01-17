@@ -11,13 +11,15 @@ class f_MainWindow;
 #include <QLabel>
 #include <QXmlStreamReader>
 #include <QProgressBar>
+#include <QDir>
 
 //=====   Headers persos  =====
 #include "Control/ModuleManager.h"
 #include "Interface/BtnItem.h"
 #include "Interface/Arduino.h"
 #include "Interface/InterpreteurFichierIni.h"
-#include "SupervisionWeb/ServeurHTTPThread.h"
+#include "SupervisionWeb/Serveur/Serveur.h"
+#include "SupervisionWeb/Web/src/Donnees.h"
 
 typedef struct {
     unsigned char ProjetOuvert : 1 ;
@@ -45,13 +47,17 @@ class f_MainWindow : public QMainWindow
 
         void            Click_BtnItem(TypeCommande Type);       //Gestion d'un clic simple sur le bouton à gauche
         inline Arduino* getArduino()    { return pArduino ; }   //Accesseur de la connesion arduino
+        void            MasquerStopServeurWeb();
+        QTimer*            pTimerRafraichissement;
+        bool get_EtatTimer();
+
 
     protected:
         void        closeEvent(QCloseEvent *    pEvent) ;   //Gestion de l'évenement de fermeture
 
     private:
         //===== ATTRIBUTS  PRIVES =====
-        QString                 MotDePass ;                 //Mot de passe du compte admin (je suppose...)
+        QString                 MotDePass ;                 //Mot de passe du compte admin
         QString                 ProfilActif ;               //Identifie le profil actif de l'appli
         QList<ModuleManager *>  Lst_pManagers ;             //Liste des managers de modules
         int                     IndiceModuleCourant ;       //Indice dans la liste du module actuellement chargé
@@ -61,9 +67,14 @@ class f_MainWindow : public QMainWindow
         BtnItem *               pBt_ItemDock[8] ;           //8 boutons dockés sur le côté pour ajouter les items organigramme1
         Arduino *               pArduino ;                  //Connexion à l'arduino
         QLabel *                pEtatConnexion ;            //Label rendant compte de l'état de la connexion
-		ServeurHTTPThread       ServeurWeb;                 //Serveur web pour supervision
         QByteArray              ConfigurationArduinoCourante;//Configuration acutellement chargée dans le logiciel
         Ui::f_MainWindow *      ui ;                        //Objet d'interface graphique
+        Serveur                 serveurWeb;
+        Donnees    *            DonneesWeb;
+        QTimer*                 pTimerWeb;
+        bool                    bEtatTimer;
+        QDir                    RepertoireProjets;          //Dossier à utiliser de base pour la recherche de fichier
+        QString                 CheminRepertoirePojets;     //Chemin du dossier des projets
 
         //===== METHODES PRIVEES =====
         void InitialiserGestionProjet() ;
@@ -82,8 +93,12 @@ class f_MainWindow : public QMainWindow
         void OuvrirFenetreChoisirProfil() ;                 //Ouvre la fenêtre de choix de profil
         void OuvrirFenetreSupprimerProfil() ;               //Ouvre la fenêtre de suppression de profil
         void OuvrirFenetreModifierProfil() ;                //Ouvre la fenêtre de modification de profil
+        void OuvrirFenetreAPropos();                        //Ouvre la fenêtre à propos de l'appli
         void ChargerModule(QString sNomModule) ;            //Selectionne le bon module, met son indice dans IndiceModuleCourant et l'affiche.
         void RechargerConfig(QString ConfigActuelle);       //Recharge les config avec les configs du plan de cablage
+        QString RecupererNomProjet(QString sChemin);                       //Récupère le nom du projet en cours
+        QString CreerArborescence(QString NomProjet);       //Créé l'arborescence du dossier de projet en fonction du nom du projet en cours
+        bool CreerPlanCablage(QString Chemin, QString NomProjet); //Créé un plan de cablage dans le bon répertoire et au nom du projet en cours.
 
     private slots:
         void on_actionNouveau_triggered() ;                         //Demande de nouveau projet
@@ -111,12 +126,14 @@ class f_MainWindow : public QMainWindow
         void on_actionImporter_triggered();                         //Demande de nouveau projet à partri d'un plan de câblage existant
         void slot_FinInterpretationIniImportConfig(InterpreteurFichierIni *Interpreteur, bool Reussi);  //Fin d'interpretation du fichier ini pour l'importation
         void slot_FinInterpretationIniOuvrirProjet(InterpreteurFichierIni *Interpreteur, bool Reussi);  //Fin d'interpretation du fichier ini pour l'ouverture
-        void on_actionServeur_Web_toggled(bool arg1);               //Demande de démarrage du seveur web
         void on_actionRedemarrer_la_maquette_triggered();
         void on_actionGestion_des_composants_I2C_triggered();
         void on_envoieProfil(QString ProfilActif);
         void on_actionDemarrerServeurWeb_triggered();
         void on_actionArreterServeurWeb_triggered();
+        void on_actionVueGlobale_triggered();
+        void on_actionA_propos_triggered();
+        void on_EnvoieEtatServeur(bool EtatServeur);
 };
 
 #endif // F_MAINWINDOW_H

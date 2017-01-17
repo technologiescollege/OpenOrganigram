@@ -145,13 +145,13 @@
    <addaction name="separator"/>
    <addaction name="actionAgrandir"/>
    <addaction name="actionRetrecir"/>
+   <addaction name="actionVueGlobale"/>
    <addaction name="separator"/>
    <addaction name="actionSV"/>
    <addaction name="actionConvert"/>
    <addaction name="separator"/>
    <addaction name="actionDemarrerServeurWeb"/>
    <addaction name="actionArreterServeurWeb"/>
-   <addaction name="actionRafraichirConfigurationServeurWeb"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="DockBtn">
@@ -254,6 +254,9 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="DockSV">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="sizePolicy">
     <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
      <horstretch>0</horstretch>
@@ -612,6 +615,21 @@
    </property>
    <property name="toolTip">
     <string>Rafraîchir Configuration Serveur Web</string>
+   </property>
+  </action>
+  <action name="actionVueGlobale">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ressources.qrc">
+     <normaloff>:/Images/App/VueGlobale-48.png</normaloff>:/Images/App/VueGlobale-48.png</iconset>
+   </property>
+   <property name="text">
+    <string>Vue globale</string>
+   </property>
+   <property name="toolTip">
+    <string>Vue globale</string>
    </property>
   </action>
  </widget>
